@@ -34,7 +34,7 @@ def main():
     ap.add_argument("-o", "--out", default="outputs/bader.gif",
                     help="输出 GIF; 若为 .png 则输出单帧")
     ap.add_argument("--html", default=None,
-                    help="额外导出独立 HTML 结果页 (与网页版一致, 自带 3Dmol.js)")
+                    help="额外导出自包含的独立 HTML 结果页 (自带 3Dmol.js)")
 
     ap.add_argument("--label", default="charge",
                     choices=list(core.LABEL_MODES),

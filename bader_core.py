@@ -3,14 +3,13 @@
 """
 Bader 电荷分析可视化核心 (ACF.dat + POSCAR -> 3D 结构 / 旋转 GIF)。
 
-处理逻辑参考 work-list-0809 项目 ``/bader`` 页面 (bader_module/analysis.py +
-static/bader.js): 按原子序号把 POSCAR 的元素与 ACF.dat 的 Bader 电荷对应,
-可选地用 POTCAR 的 ZVAL 计算电荷差 Δq = q_Bader - ZVAL; 结构可视化提供
-「原子序号 / 元素类型 / Bader 电荷差」三种标注方式。
+职责: 解析 ACF.dat / POSCAR(CONTCAR) / POTCAR, 按原子序号把 POSCAR 的元素
+与 ACF.dat 的 Bader 电荷对应, 可选地用 POTCAR 的 ZVAL 计算电荷差
+Δq = q_Bader - ZVAL; 结构可视化提供「原子序号 / 元素类型 / Bader 电荷差」
+三种标注方式。
 
-GIF 渲染参考 CONT-gif 项目 (contcar_to_gif.py + viewer3d.py):
-    结构 -> 3Dmol.js(浏览器 WebGL) 正交相机 -> Playwright 逐帧截图
-    -> Pillow 合成旋转 GIF
+渲染流程: 结构 -> 3Dmol.js(浏览器 WebGL) 正交相机 -> Playwright 逐帧截图
+-> Pillow 合成旋转 GIF; 亦可导出交互式 HTML 与自包含的独立结果页。
 
 运行环境: D:\\miniconda3\\envs\\chem_env
 """
@@ -46,7 +45,6 @@ BUNDLE_DIR = _bundle_dir()
 THREEDMOL_CANDIDATES = [
     HERE / "3dmol" / "3Dmol-min.js",
     BUNDLE_DIR / "3dmol" / "3Dmol-min.js",
-    HERE.parent / "work-list-0809" / "static" / "vendor" / "3Dmol-min.js",
 ]
 THREEDMOL_CDN = "https://3dmol.org/build/3Dmol-min.js"
 
@@ -152,8 +150,8 @@ def _read_text(path: str | os.PathLike[str]) -> str:
 def parse_poscar(path: str | os.PathLike[str]) -> dict[str, Any]:
     """解析 POSCAR/CONTCAR, 返回晶格矢量与元素信息。
 
-    原子坐标不使用 POSCAR 中的值 —— 与 /bader 页面一致, 结构坐标取 ACF.dat
-    给出的笛卡尔坐标, POSCAR 只提供晶格矢量与元素种类/数量。
+    原子坐标不使用 POSCAR 中的值 —— 结构坐标统一取 ACF.dat 给出的笛卡尔
+    坐标, POSCAR 只提供晶格矢量与元素种类/数量。
     """
     lines = _read_text(path).splitlines()
     if len(lines) < 8:
@@ -285,7 +283,7 @@ def load_bader_data(poscar_path: str, acf_path: str,
         raise ValueError(
             f"ACF.dat 原子数 ({len(acf_atoms)}) 与 POSCAR 原子数 ({npos}) 不一致")
 
-    # 与 /bader 页面一致: 按 ACF 中的原子编号排序后再对应
+    # 按 ACF 中的原子编号排序后再与 POSCAR 元素逐一对应
     ordered = sorted(acf_atoms, key=lambda a: a["index"])
     indices = [a["index"] for a in ordered]
     if indices != list(range(1, npos + 1)):
@@ -1191,7 +1189,7 @@ def render_single_png(data: dict[str, Any], out_path: str | os.PathLike[str],
 
 
 # ==========================================================================
-# 独立 HTML 导出 (与 work-list-0809 /bader 结果页一致)
+# 独立 HTML 导出 (自包含结果页)
 # ==========================================================================
 HTML_NAME = "bader_charge_analysis.html"
 GROUP_NAMES = ["A部分", "B部分", "C部分", "D部分", "E部分", "F部分"]
@@ -1453,7 +1451,7 @@ def export_standalone_html(data: dict[str, Any],
                            generated_at: str | None = None,
                            css_path: str | os.PathLike[str] | None = None,
                            js_path: str | os.PathLike[str] | None = None) -> str:
-    """导出与 work-list-0809 `/bader` 结果页一致的独立 HTML 文件。
+    """导出自包含的独立 HTML 结果页。
 
     文件自带内联 CSS、3Dmol.js 与 bader.js, 不依赖任何外部资源, 可直接打开。
     """
