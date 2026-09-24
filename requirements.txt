@@ -1,0 +1,15 @@
+# Bader 电荷可视化工作台 - 依赖
+# 安装: pip install -r requirements.txt
+# 或双击 install_deps.bat
+
+# 数值计算
+numpy
+
+# 合成 GIF / 绘制图例
+pillow
+
+# 图形界面 (3D 窗口基于 QtWebEngine)
+PySide6
+
+# 调用系统浏览器 (Edge/Chrome) 做 3Dmol.js 逐帧截图
+playwright

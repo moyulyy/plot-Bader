@@ -1,0 +1,91 @@
+# ================================================
+#                   SYSTEM SETUP
+# ================================================
+SYSTEM = bader               # Job title (Bader charge analysis)
+
+# ================================================
+#               FILE CONTROL PARAMETERS
+# ================================================
+# Start parameters for this job
+NWRITE = 2                   # Write-flag: 0-long MD runs, 2-moderate output
+ISTART = 1                   # Job: 0-new, 1-continuation, 2-samecut
+ICHARG = 1                   # Charge: 1-CHGCAR, 2-atomic, 11-band/PDOS
+
+# File output control
+LCHARG = .TRUE.              # Write charge densities (CHGCAR and CHG)
+LWAVE  = .FALSE.             # Write wavefunctions (WAVECAR)
+LCORR  = .TRUE.              # Harris-Foulkes correction
+LDIAG  = .TRUE.              # Subspace diagonalization
+LAECHG = .TRUE.              # Write all-electron charge density
+
+# ==============================================
+#           CHARGE DENSITY GRID SETTINGS  
+# ==============================================
+#ADDGRID = .TRUE.               # High-precision charge grid (critical!)  
+#NGXF = 180                     # FFT grid density in X (test convergence)  
+#NGYF = 180                     # FFT grid density in Y  
+#NGZF = 180                     # FFT grid density in Z  
+
+# ================================================
+#           ELECTRONIC RELAXATION PARAMETERS
+# ================================================
+ENCUT  = 450                 # Energy cutoff (eV), largest ENMAX in POTCAR
+
+ISPIN=2
+
+
+ALGO   = F                   # Electronic minimization algorithm
+EDIFF  = 1.0E-6              # Electronic convergence threshold (eV)
+GGA    = PE                  # Exchange-correlation functional (PBE)
+ISYM   = 0                   # Symmetry: 0-off
+SYMPREC= 1.0E-5              # Symmetry precision
+PREC   = N                   # Precision mode (Normal)
+
+
+# ==============================================
+#            MIXING & CONVERGENCE  
+# ==============================================
+NELM = 120                     # Max electronic steps  
+NELMIN = 5                     # Min electronic steps  
+AMIX = 0.2                     # Charge mixing parameter  
+BMIX = 0.0001                  # Small mixing value (avoids crashes)  
+AMIX_MAG = 0.8                 # Spin mixing parameter  
+BMIX_MAG = 0.0001              # Small spin mixing  
+
+# ================================================
+#            IONIC RELAXATION PARAMETERS
+# ================================================
+NSW    = 0                   # Maximum ionic steps (0 for single-point)
+EDIFFG = -0.01               # Force convergence threshold (eV/Å)
+IBRION = -1                  # Ionic relaxation: -1-fixed positions
+ISIF   = 0                   # Stress/relaxation: 0-stress only
+
+# ================================================
+#                DOS PARAMETERS
+# ================================================
+ISMEAR = 1                   # Smearing method: -1-Fermi, 0-Gaussian
+SIGMA  = 0.2                # Smearing width (eV)
+#EMIN   = -12                 # DOS minimum energy (eV)
+#EMAX   = 7                   # DOS maximum energy (eV)
+
+# ================================================
+#            PARALLELIZATION SETTINGS
+# ================================================
+KPAR   = 2                   # Number of k-point groups for parallelization
+#NCORE  = 36                 # Cores per node
+LPLANE = .FALSE.             # Parallelization scheme
+NSIM   = 1                   # Bands optimized simultaneously
+
+# ================================================
+#               REAL SPACE SETTINGS
+# ================================================
+LREAL  = Auto                # Projection scheme: Auto-selection
+
+# ================================================
+#                DFT-D3 CORRECTION
+# ================================================
+IVDW   = 11                  # DFT-D3 correction (no damping)
+
+# ==============================================
+#                   DFT+U SETTINGS
+# ==============================================
