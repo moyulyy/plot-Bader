@@ -19,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 APP_NAME = "BaderChargeViewer"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 DIST = ROOT / "dist"
 BUILD = ROOT / "build"
 APP_DIR = DIST / APP_NAME

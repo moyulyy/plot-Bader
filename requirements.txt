@@ -5,6 +5,9 @@
 # 数值计算
 numpy
 
+# Excel 导出 (.xlsx)
+openpyxl
+
 # 合成 GIF / 绘制图例
 pillow
 

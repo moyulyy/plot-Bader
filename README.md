@@ -51,7 +51,7 @@
 
 | 平台 | 文件 | 大小 |
 | :--: | --- | :--: |
-| **Windows 10 / 11 (x64)** | [**`BaderChargeViewer-1.0.0-win64-portable.zip`**](https://github.com/moyulyy/plot-Bader/releases/latest) | ~264 MB |
+| **Windows 10 / 11 (x64)** | [**`BaderChargeViewer-1.0.1-win64-portable.zip`**](https://github.com/moyulyy/plot-Bader/releases/latest) | ~264 MB |
 
 <a href="https://github.com/moyulyy/plot-Bader/releases/latest"><b>➡️ 前往 Releases 下载最新版本</b></a>
 
@@ -77,7 +77,7 @@
 | 🏷 | **三种标注** | 原子序号 / 元素类型 / Bader 电荷差 `Δq` |
 | 🎨 | **两种着色** | 按元素（Jmol 配色）或按电荷差（以 0 为中心的蓝‑白‑红发散色带） |
 | 🎞 | **旋转 GIF** | 绕晶胞 `a/b/c` 轴或屏幕轴匀速旋转，首尾无缝循环；支持乒乓、图例、超采样 |
-| 📊 | **数据表** | 逐原子明细（`ZVAL` / `q` / `Δq`），`Δq` 红蓝染色，一键导出 CSV |
+| 📊 | **数据表** | 逐原子明细（`ZVAL` / `q` / `Δq`），`Δq` 红蓝染色，一键导出 CSV / Excel |
 | 📄 | **独立 HTML** | 导出**完全自包含**的结果页：三视图 + 图例 + 明细 + 分组统计 + 判据说明 |
 | 🖼 | **单帧 PNG** | 快速导出一张带图例的静态结构图 |
 
@@ -154,7 +154,7 @@ python bader_to_gif.py ^
 | 页面 | 说明 |
 | :--: | --- |
 | **① 结构可视化** | 顶部 **基准视角**（正视 / 后视 / 俯视 / 仰视 / 右视 / 左视，基于晶胞矢量）；左侧交互 3D；右侧输入目录 + 显示设置（标注 / 着色 / 样式 / 半径系数 / 缩放 / 标签字号 / 背景 / 晶胞框）+ 统计信息 |
-| **② 原子数据表** | 逐原子 `序号 / 元素 / X / Y / Z / ZVAL / Bader 电荷 / Δq`，支持 **导出 CSV** 与 **导出 HTML** |
+| **② 原子数据表** | 逐原子 `序号 / 元素 / X / Y / Z / ZVAL / Bader 电荷 / Δq`，支持 **导出 Excel**、**导出 CSV** 与 **导出 HTML** |
 | **③ GIF 生成** | 左：视角与旋转、画布与输出、参数说明；右：摘要与操作（生成 GIF / 导出 PNG / 导出 HTML / 打开输出目录） |
 | **④ GIF 预览** | 滚轮缩放、拖动平移、双击复位，像看图工具一样预览 |
 | **⑤ 日志** | 完整运行日志，便于排查渲染 / 浏览器问题 |
@@ -204,6 +204,9 @@ python bader_to_gif.py [选项]
 
 **导出方式**：界面右上角 / 数据表底部 / GIF 页「操作」卡片，或命令行 `--html outputs\bader.html`。
 
+原子明细还支持在「原子数据表」页一键导出为 **CSV** 或 **Excel（`.xlsx`）**：
+Excel 工作簿包含带样式表头、冻结首行、自动筛选、列宽与数值格式，`Δq` 列按正红负蓝着色。
+
 ---
 
 ## 🔬 数据约定与判据
@@ -234,7 +237,7 @@ python build_exe.py
 
 ```text
 dist/BaderChargeViewer/BaderChargeViewer.exe          # 便携版程序
-dist/BaderChargeViewer-1.0.0-win64-portable.zip       # 可分发的压缩包
+dist/BaderChargeViewer-1.0.1-win64-portable.zip       # 可分发的压缩包
 ```
 
 <details>
@@ -256,6 +259,7 @@ dist/BaderChargeViewer-1.0.0-win64-portable.zip       # 可分发的压缩包
 | `pillow` | — | GIF 合成、图例绘制、图标生成 |
 | `PySide6` | ≥ 6.5 | 图形界面（含 QtWebEngine / Chromium 内核） |
 | `playwright` | — | 驱动系统浏览器逐帧渲染（GIF / PNG） |
+| `openpyxl` | — | 导出逐原子明细 Excel 工作簿（`.xlsx`） |
 | `pyinstaller` | — | （可选）打包便携版 exe |
 
 - 运行来源：`bader_gui.py`（界面） · `bader_core.py`（核心） · `bader_to_gif.py`（命令行） · `ui_kit.py`（组件库）；
@@ -336,6 +340,20 @@ plot_Bader/
 - [ ] 支持多帧轨迹（XDATCAR）与动画自旋
 - [ ] 自定义颜色映射与色标范围
 - [ ] Linux / macOS 发行包
+
+---
+
+## 📝 更新日志
+
+### v1.0.1
+
+- ✨ 「原子数据表」页新增 **导出 Excel（`.xlsx`）** 按钮：带样式表头、冻结首行、
+  自动筛选、列宽与数值格式，`Δq` 列按正红负蓝着色；
+- 🧩 新增 `openpyxl` 依赖，并同步更新 PyInstaller 打包配置与文档。
+
+### v1.0.0
+
+- 🎉 首个正式版本：3D 可视化、原子数据表、旋转 GIF、独立 HTML 报告与命令行工具。
 
 ---
 

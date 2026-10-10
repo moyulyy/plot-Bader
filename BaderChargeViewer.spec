@@ -25,6 +25,9 @@ for _pkg in ("playwright",):
     hiddenimports += _h
 hiddenimports += collect_submodules("playwright")
 
+# 原子数据表导出 Excel(.xlsx)。
+hiddenimports += ["openpyxl", "et_xmlfile"]
+
 a = Analysis(
     ["bader_gui.py"],
     pathex=[],

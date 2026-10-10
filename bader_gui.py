@@ -989,6 +989,12 @@ class MainWindow(QWidget):
         btn_html.setCursor(Qt.PointingHandCursor)
         btn_html.clicked.connect(self._export_html)
         row.addWidget(btn_html)
+        btn_excel = QPushButton("导出 Excel")
+        btn_excel.setObjectName("Secondary")
+        btn_excel.setCursor(Qt.PointingHandCursor)
+        btn_excel.setToolTip("导出为 Excel 工作簿 (.xlsx)")
+        btn_excel.clicked.connect(self._export_excel)
+        row.addWidget(btn_excel)
         btn = QPushButton("导出 CSV")
         btn.setObjectName("Secondary")
         btn.setCursor(Qt.PointingHandCursor)
@@ -1081,6 +1087,70 @@ class MainWindow(QWidget):
             self._toast("完成", f"已导出 CSV:\n{path}")
         except Exception as exc:  # noqa: BLE001
             self._log(f"[错误] 导出 CSV 失败: {exc}")
+            self._toast("出错", str(exc), QMessageBox.Critical)
+
+    def _export_excel(self):
+        if not self.data:
+            self._toast("提示", "尚未加载数据。")
+            return
+        try:
+            import openpyxl
+            from openpyxl.styles import Alignment, Font, PatternFill
+            from openpyxl.utils import get_column_letter
+        except ImportError:
+            self._toast("缺少依赖",
+                        "导出 Excel 需要 openpyxl, 请执行:\n"
+                        "pip install openpyxl", QMessageBox.Warning)
+            return
+        default = str(DEFAULT_OUT_DIR / "bader_charge.xlsx")
+        path, _ = QFileDialog.getSaveFileName(self, "导出 Excel", default,
+                                              "Excel 工作簿 (*.xlsx)")
+        if not path:
+            return
+        if not path.lower().endswith(".xlsx"):
+            path += ".xlsx"
+        try:
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = "Bader电荷"
+            header = ["序号", "元素", "X (Å)", "Y (Å)", "Z (Å)",
+                      "ZVAL", "Bader 电荷 (e)", "Δq (e)"]
+            ws.append(header)
+            head_fill = PatternFill("solid", fgColor="1F6FEB")
+            head_font = Font(bold=True, color="FFFFFF")
+            for c in range(1, len(header) + 1):
+                cell = ws.cell(row=1, column=c)
+                cell.fill = head_fill
+                cell.font = head_font
+                cell.alignment = Alignment(horizontal="center",
+                                           vertical="center")
+            has_delta = self.data["has_delta"]
+            for a in self.data["atoms"]:
+                ws.append([
+                    a["index"], a["symbol"], a["x"], a["y"], a["z"],
+                    a.get("zval", None), a["charge"],
+                    a.get("delta_charge", None) if has_delta else None])
+            # 数值格式与小数字数
+            for r in range(2, ws.max_row + 1):
+                for c in (3, 4, 5):
+                    ws.cell(row=r, column=c).number_format = "0.000000"
+                ws.cell(row=r, column=6).number_format = "0.00"
+                ws.cell(row=r, column=7).number_format = "0.000000"
+                dcell = ws.cell(row=r, column=8)
+                if has_delta and dcell.value is not None:
+                    dcell.number_format = "+0.000000;-0.000000"
+                    dcell.font = Font(color="B91C1C" if dcell.value >= 0
+                                      else "1D4ED8")
+            widths = [8, 8, 13, 13, 13, 9, 16, 13]
+            for i, w in enumerate(widths, start=1):
+                ws.column_dimensions[get_column_letter(i)].width = w
+            ws.freeze_panes = "A2"
+            ws.auto_filter.ref = f"A1:H{ws.max_row}"
+            wb.save(path)
+            self._log(f"[完成] 已导出 Excel: {path}")
+            self._toast("完成", f"已导出 Excel:\n{path}")
+        except Exception as exc:  # noqa: BLE001
+            self._log(f"[错误] 导出 Excel 失败: {exc}")
             self._toast("出错", str(exc), QMessageBox.Critical)
 
     # ==================================================================
